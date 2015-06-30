@@ -4,9 +4,9 @@ import Ember from 'ember';
 
 export default Ember.Component.extend({
   tagName: 'input',
-  attributeBindings: ['readonly', 'disabled', 'placeholder'],
+  attributeBindings: ['readonly'],
 
-  setupPikaday: Ember.on('didInsertElement', function() {
+  setupPikaday: function() {
     var that = this;
 
     var options = {
@@ -16,17 +16,12 @@ export default Ember.Component.extend({
           that.userSelectedDate();
         });
       },
-      onClose: function() {
-        Ember.run(function() {
-          if (that.get('pikaday').getDate() === null) {
-            that.set('value', null);
-          }
-        });
-      },
       firstDay: 1,
       format: this.get('format') || 'DD.MM.YYYY',
-      yearRange: that.determineYearRange(),
-      theme: this.get('theme') || null
+      minDate: this.get('minDate'),
+      maxDate: this.get('maxDate'),
+      yearRange: that.determineYearRange()
+
     };
 
     if (this.get('i18n')) {
@@ -36,20 +31,12 @@ export default Ember.Component.extend({
     var pikaday = new Pikaday(options);
 
     this.set('pikaday', pikaday);
-    this.setPikadayDate();
-
-    this.addObserver('value', function() {
-      that.setPikadayDate();
-    });
-  }),
-
-  teardownPikaday: Ember.on('willDestroyElement', function() {
-    this.get('pikaday').destroy();
-  }),
-
-  setPikadayDate: function() {
     this.get('pikaday').setDate(this.get('value'), true);
-  },
+  }.on('didInsertElement'),
+
+  teardownPikaday: function() {
+    this.get('pikaday').destroy();
+  }.on('willDestroyElement'),
 
   userSelectedDate: function() {
     var selectedDate = this.get('pikaday').getDate();
@@ -61,12 +48,16 @@ export default Ember.Component.extend({
     this.set('value', selectedDate);
   },
 
+  setDate: function() {
+    this.get('pikaday').setDate(this.get('value'), true);
+  }.observes('value'),
+
   determineYearRange: function() {
     var yearRange = this.get('yearRange');
 
     if (yearRange) {
       if (yearRange.indexOf(',') > -1) {
-        var yearArray = yearRange.split(',');
+        var yearArray =  yearRange.split(',');
 
         if (yearArray[1] === 'currentYear') {
           yearArray[1] = new Date().getFullYear();
@@ -79,11 +70,5 @@ export default Ember.Component.extend({
     } else {
       return 10;
     }
-  },
-
-  autoHideOnDisabled: Ember.observer('disabled', function () {
-    if (this.get('disabled')) {
-      this.get('pikaday').hide();
-    }
-  })
+  }
 });
