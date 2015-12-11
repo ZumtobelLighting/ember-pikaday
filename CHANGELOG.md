@@ -1,3 +1,24 @@
+## 0.13.0
+* Add binding for `name` attribute. (Contribution of @listepo)
+* Add binding for `size` attribute. (Contribution of @peteonrails)
+* Set `value` to `null` when the input is cleared manually.
+* Use `ember-cli-moment-shim` addon to play nicely with other moment.js based addons. (Contribution of @rinti)
+
+## 0.12.0
+* Fix npm publish fail.
+
+## 0.11.0
+* Add support for `minDate` and `maxDate`. (Contribution of @yanglang)
+* Fix test helpers in scenarios with multiple date pickers on page. (Contribution of @LevelbossMike)
+
+## 0.10.0
+* Add ability to specify `firstDay`. (Contribution of @beerlington)
+* Add support for the `type` attribute. (Contribution of @ChiliConSql)
+
+## 0.9.0
+* Fix error where an initially disabled datepicker tries to hide itself even though it is not rendered yet. (Contribution of @jeffreybiles)
+* Improve ability to extend the component by assigning placeholder methods to the Pikaday events. (Contribution of @marcoow)
+
 ## 0.8.0
 * Add support for the `disabled` attribute. (Contribution of @leojpod)
 * Add support for the `placeholder` attribute. (Contribution of @leojpod)

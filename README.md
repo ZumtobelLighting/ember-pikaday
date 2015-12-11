@@ -95,6 +95,38 @@ If the datepicker is shown to the user and it gets disabled it will close the da
 </label>
 ```
 
+The `firstDay` attribute is supported as a binding so you can set the first day of the calendar week.
+Defaults to Monday.
+
+* 0 = Sunday
+* 1 = Monday
+* etc...
+
+```handlebars
+<label>
+  Due date:
+  {{pikaday-input value=dueAt firstDay=0}}
+</label>
+```
+
+The `minDate` attribute is supported as a binding so you can set the earliest date that can be selected.
+
+```handlebars
+<label>
+  Due Date:
+  {{pikaday-input value=dueAt minDate=minDate}}
+</label>
+```
+
+The `maxDate` attribute is supported as a binding so you can set the latest date that can be selected.
+
+```handlebars
+<label>
+  Due Date:
+  {{pikaday-input value=dueAt maxDate=maxDate}}
+</label>
+```
+
 ## Return dates in UTC time zone
 
 The date returned by ember-pikaday is in your local time zone due to the JavaScript default behaviour of `new Date()`. This can lead to problems when your application converts the date to UTC. In additive time zones (e.g. +0010) the resulting converted date could be yesterdays date. You can force the component to return a date with the UTC time zone by passing `useUTC=true` to it.
@@ -108,6 +140,14 @@ The date returned by ember-pikaday is in your local time zone due to the JavaScr
 
 ember-pikaday will not automatically convert the date to UTC if your application is setting the datepicker value directly!
 
+## Data Down, Actions Up
+
+ember-pikaday has its origin prior Embers moved to the Data Down, Actions Up (DDAU) paradigma. Therefore it operates in a two way binding mode by default. If you want to be closer to DDAU you can extend the `pikaday-input` component and overwrite certain callbacks to accomplish DDAU.
+
+`onOpen` is called whenever the datepicker opens.  
+`onClose` is called whenever the datepicker is closed.  
+`onSelect` is called whenever the user selected a date.  
+`onDraw` is called whenever the datepicker is (re-) drawn.
 
 ## Localization
 
@@ -127,9 +167,8 @@ To localize the datepicker itself, this is the popup you see after clicking the 
 ```js
 // app/initializers/setup-pikaday-i18n.js
 
-/* globals moment */
-
 import Ember from 'ember';
+import moment from 'moment';
 
 export default {
   name: 'setup-pikaday-i18n',
@@ -181,3 +220,7 @@ equal(interactor.selectedYear(), 1989);
 equal(interactor.selectedMonth(), 3);
 equal(interactor.selectedDay(), 28);
 ```
+
+## Other Resources
+
+* [Video introduction by EmberScreencasts](https://www.emberscreencasts.com/posts/56-ember-pikaday)

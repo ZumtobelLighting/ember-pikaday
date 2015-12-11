@@ -1,13 +1,16 @@
-/* globals Pikaday, moment */
+/* globals Pikaday */
 
 import Ember from 'ember';
+import moment from 'moment';
 
 export default Ember.Component.extend({
   tagName: 'input',
-  attributeBindings: ['readonly'],
+  attributeBindings: ['readonly', 'disabled', 'placeholder', 'type', 'name', 'size'],
+  type: 'text',
 
   setupPikaday: function() {
     var that = this;
+    var firstDay = this.get('firstDay');
 
     var options = {
       field: this.$()[0],
@@ -16,12 +19,17 @@ export default Ember.Component.extend({
           that.userSelectedDate();
         });
       },
-      firstDay: 1,
-      format: this.get('format') || 'DD.MM.YYYY',
-      minDate: this.get('minDate'),
-      maxDate: this.get('maxDate'),
-      yearRange: that.determineYearRange()
 
+      onOpen: Ember.run.bind(this, this.onPikadayOpen),
+      // onClose: Ember.run.bind(this, this.onPikadayClose),
+      // onSelect: Ember.run.bind(this, this.onPikadaySelect),
+      onDraw: Ember.run.bind(this, this.onPikadayRedraw),
+      firstDay: (typeof firstDay !== 'undefined') ? parseInt(firstDay, 10) : 1,
+      format: this.get('format') || 'DD.MM.YYYY',
+      yearRange: that.determineYearRange(),
+      minDate: this.get('minDate') || null,
+      maxDate: this.get('maxDate') || null,
+      theme: this.get('theme') || null
     };
 
     if (this.get('i18n')) {
@@ -37,6 +45,28 @@ export default Ember.Component.extend({
   teardownPikaday: function() {
     this.get('pikaday').destroy();
   }.on('willDestroyElement'),
+
+  setMinDate: function() {
+    this.get('pikaday').setMinDate(this.get('minDate'));
+  },
+
+  setMaxDate: function() {
+    this.get('pikaday').setMaxDate(this.get('maxDate'));
+  },
+
+  onPikadayOpen: Ember.K,
+
+  onPikadayClose: function() {
+    if (this.get('pikaday').getDate() === null || Ember.isEmpty(this.$().val())) {
+      this.set('value', null);
+    }
+  },
+
+  onPikadaySelect: function() {
+    this.userSelectedDate();
+  },
+
+  onPikadayRedraw: Ember.K,
 
   userSelectedDate: function() {
     var selectedDate = this.get('pikaday').getDate();
